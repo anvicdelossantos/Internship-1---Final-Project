@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Media Processing</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <header class="app-header">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="9" stroke="#F7E7CE" stroke-width="1.5" />
+            <path d="M6 10a4 4 0 0 1 8 0" stroke="#F7E7CE" stroke-width="1.5" stroke-linecap="round" />
+            <circle cx="10" cy="13" r="1.5" fill="#F7E7CE" />
+        </svg>
+        <h1>AI Media Processing</h1>
+        <span class="header-badge">v1.0 · Local</span>
+    </header>
+
+    <div class="workspace">
+
+        <aside class="left-panel">
+            <div>
+                <div class="panel-heading">Select Model</div>
+                <div class="model-cards-list">
+
+                    <div class="model-card active" data-model="road">
+                        <div class="model-card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 17l3-10h12l3 10" />
+                                <path d="M3 17h18" />
+                                <circle cx="7.5" cy="19.5" r="1.5" />
+                                <circle cx="16.5" cy="19.5" r="1.5" />
+                            </svg>
+                        </div>
+                        <div class="model-card-name">Road Object Detection</div>
+                        <div class="model-card-desc">Identifies vehicles, pedestrians, traffic lights, and road signs in real-world driving scenes using a BDD100K-trained YOLO11s model.</div>
+                        <span class="model-card-tag">YOLO11s · 12 classes</span>
+                    </div>
+
+                    <div class="model-card" data-model="damage">
+                        <div class="model-card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                            </svg>
+                        </div>
+                        <div class="model-card-name">Vehicle Damage Identification</div>
+                        <div class="model-card-desc">Detects and classifies vehicle body damage — dents, scratches, cracks, broken lamps, shattered glass, and flat tires.</div>
+                        <span class="model-card-tag">YOLO11m · 6 classes</span>
+                    </div>
+
+                    <div class="model-card" data-model="road_condition">
+                        <div class="model-card-icon">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="3" width="18" height="18" rx="2" />
+                                <path d="M3 9h18M3 15h18M9 3v18M15 3v18" />
+                            </svg>
+                        </div>
+                        <div class="model-card-name">Road Condition Analysis</div>
+                        <div class="model-card-desc">Analyses road surface quality by detecting potholes, longitudinal cracks, transverse cracks, and alligator cracking patterns.</div>
+                        <span class="model-card-tag">YOLOv8s · 4 classes</span>
+                    </div>
+
+                </div>
+            </div>
+
+            <a href="/history" class="history-link">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                </svg>
+                View Detection History
+                <svg width="12" height="12" viewBox="0 0 13 13" fill="none">
+                    <path d="M2 6.5h9M7.5 2.5l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            </a>
+        </aside>
+
+        <main class="right-panel">
+            <div>
+                <div class="right-panel-title">Upload <span>Media</span></div>
+                <span class="selected-model-pill">
+                    <span class="pill-dot"></span>
+                    <span id="selectedModelLabel">Road Object Detection</span>
+                </span>
+            </div>
+
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon-wrap">
+                    <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 3v10M6 7l4-4 4 4" stroke="#80011F" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                        <path d="M3 15h14" stroke="#80011F" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                </div>
+                <input type="file" id="fileInput" name="file" accept="image/*,video/mp4,video/quicktime,video/avi">
+                <div class="upload-label">Choose media to analyze</div>
+                <div class="upload-hint">or drag &amp; drop here — JPG, PNG, JFIF, MP4, MOV</div>
+            </div>
+
+            <div id="previewContainer"></div>
+
+            <div class="loading-wrap" id="loadingWrap">
+                <div class="spinner"></div>
+                <div style="flex:1">
+                    <div class="loading-text">Running inference…</div>
+                    <div class="loading-bar-wrap">
+                        <div class="loading-bar" id="loadingBar"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-primary" id="processBtn">
+                    <svg width="14" height="14" viewBox="0 0 15 15" fill="none">
+                        <circle cx="7.5" cy="7.5" r="6" stroke="#F7E7CE" stroke-width="1.5" />
+                        <path d="M5 7.5l2 2 3-3" stroke="#F7E7CE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    Run Detection
+                </button>
+                <button class="btn-secondary" id="clearBtn">Clear</button>
+            </div>
+        </main>
+
+        <section class="results-area">
+            <div class="results-card" id="resultsCard">
+                <div class="results-header">
+                    <span class="results-title" id="resultsTitle">Detection Results</span>
+                    <span class="results-meta" id="resultsMeta"></span>
+                </div>
+
+                <div class="results-inner">
+                    <div class="annotated-col" id="annotatedCol">
+                        <div class="annotated-col-label">Annotated Output</div>
+                        <img id="annotatedImage" src="" alt="Annotated Result" style="display:none;">
+                        <video id="annotatedVideo" controls style="display:none; width:100%; border-radius:10px; border:1px solid var(--line); max-height:400px;">
+                            <source id="annotatedVideoSrc" src="" type="video/mp4">
+                        </video>
+                    </div>
+
+                    <div class="detections-col">
+                        <div class="detections-col-label">Detection Breakdown</div>
+                        <div id="resultContent"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div><script>
+        const fileInput = document.getElementById('fileInput');
+        const previewContainer = document.getElementById('previewContainer');
+        const loadingWrap = document.getElementById('loadingWrap');
+        const loadingBar = document.getElementById('loadingBar');
+        const resultsCard = document.getElementById('resultsCard');
+        const resultContent = document.getElementById('resultContent');
+        const resultsTitle = document.getElementById('resultsTitle');
+        const resultsMeta = document.getElementById('resultsMeta');
+        const clearBtn = document.getElementById('clearBtn');
+        const processBtn = document.getElementById('processBtn');
+        const uploadArea = document.getElementById('uploadArea');
+        const annotatedCol = document.getElementById('annotatedCol');
+        const annotatedImage = document.getElementById('annotatedImage');
+        const annotatedVideo = document.getElementById('annotatedVideo');
+        const annotatedVideoSrc = document.getElementById('annotatedVideoSrc');
+        let selectedModel = 'road';
+
+        // ── Model card selection ──
+        document.querySelectorAll('.model-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.model-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                selectedModel = card.dataset.model;
+                document.getElementById('selectedModelLabel').textContent =
+                    card.querySelector('.model-card-name').textContent;
+            });
+        });
+
+        // ── Drag & drop ──
+        uploadArea.addEventListener('dragover', e => {
+            e.preventDefault();
+            uploadArea.classList.add('drag-over');
+        });
+        uploadArea.addEventListener('dragleave', () => uploadArea.classList.remove('drag-over'));
+        uploadArea.addEventListener('drop', e => {
+            e.preventDefault();
+            uploadArea.classList.remove('drag-over');
+            if (e.dataTransfer.files[0]) {
+                fileInput.files = e.dataTransfer.files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // ── File preview ──
+        fileInput.addEventListener('change', () => {
+            previewContainer.innerHTML = '';
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            const fmt = b => b < 1024 * 1024 ? (b / 1024).toFixed(0) + 'KB' : (b / 1024 / 1024).toFixed(1) + 'MB';
+            const item = document.createElement('div');
+            item.className = 'preview-item';
+
+            if (file.type.startsWith('image/')) {
+                const img = document.createElement('img');
+                img.className = 'preview-thumb';
+                img.src = URL.createObjectURL(file);
+                img.onload = () => URL.revokeObjectURL(img.src);
+                item.appendChild(img);
+            } else {
+                const icon = document.createElement('div');
+                icon.style.cssText = 'width:54px;height:54px;background:#fceeed;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;';
+                icon.textContent = '🎬';
+                item.appendChild(icon);
+            }
+
+            const info = document.createElement('div');
+            info.className = 'preview-info';
+            info.innerHTML = `<div class="preview-name">${file.name}</div><div class="preview-size">${fmt(file.size)}</div>`;
+
+            const rm = document.createElement('button');
+            rm.className = 'preview-remove';
+            rm.innerHTML = '&times;';
+            rm.onclick = () => {
+                fileInput.value = '';
+                previewContainer.innerHTML = '';
+            };
+
+            item.appendChild(info);
+            item.appendChild(rm);
+            previewContainer.appendChild(item);
+        });
+
+        // ── Clear ──
+        clearBtn.addEventListener('click', () => {
+            fileInput.value = '';
+            previewContainer.innerHTML = '';
+            resultsCard.classList.remove('visible');
+            annotatedImage.src = '';
+            annotatedImage.style.display = 'none';
+            annotatedVideo.style.display = 'none';
+            annotatedVideoSrc.src = '';
+            annotatedVideo.load();
+        });
+
+        // ── Submit ──
+        processBtn.addEventListener('click', async () => {
+            if (!fileInput.files[0]) {
+                alert('Please select a file first');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            formData.append('model', selectedModel);
+
+            loadingWrap.classList.add('visible');
+            resultsCard.classList.remove('visible');
+            processBtn.disabled = true;
+
+            let prog = 0;
+            const tick = setInterval(() => {
+                prog = Math.min(prog + Math.random() * 15, 88);
+                loadingBar.style.width = prog + '%';
+            }, 300);
+
+            try {
+                const res = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                clearInterval(tick);
+                loadingBar.style.width = '100%';
+
+                setTimeout(() => {
+                    loadingWrap.classList.remove('visible');
+                    loadingBar.style.width = '0';
+
+                    if (res.ok) {
+                        const titles = {
+                            road: 'Road Object Detections',
+                            damage: 'Vehicle Damage Results',
+                            road_condition: 'Road Condition Analysis'
+                        };
+                        resultsTitle.textContent = titles[selectedModel] || 'Detection Results';
+                        resultsMeta.textContent = data.filename;
+
+                        // Annotated output — image or video
+                        if (data.annotated_url) {
+                            annotatedCol.style.display = '';
+
+                            if (data.is_video) {
+                                annotatedImage.style.display = 'none';
+                                annotatedVideo.style.display = '';
+                                annotatedVideoSrc.src = data.annotated_url + '?t=' + Date.now();
+                                annotatedVideo.load();
+                            } else {
+                                annotatedVideo.style.display = 'none';
+                                annotatedImage.style.display = '';
+                                annotatedImage.src = data.annotated_url + '?t=' + Date.now();
+                            }
+                        } else {
+                            annotatedCol.style.display = 'none';
+                        }
+
+                        let html = '';
+
+                        // ROAD OBJECT DETECTION
+                        if (selectedModel === 'road') {
+                            const dets = data.detections || [];
+                            dets.forEach((d, i) => {
+                                const pct = (d.confidence * 100).toFixed(1);
+                                html += `<div class="detection-item" style="animation-delay:${i * 0.07}s">
+                                    <div class="det-label">${d.label}</div>
+                                    <div class="det-bar-wrap"><div class="det-bar" style="width:${pct}%"></div></div>
+                                    <div class="det-pct">${pct}%</div>
+                                </div>`;
+                            });
+                            if (!dets.length) html = '<p class="no-detections">No road objects detected above threshold.</p>';
+
+                        // VEHICLE DAMAGE DETECTION
+                        } else if (selectedModel === 'damage') {
+                            const isDamage = data.damage_status === "Damage Detected";
+                            html += `<div class="status-banner ${isDamage ? 'damage' : 'no-damage'}">${data.damage_status}</div>`;
+                            const evidence = data.evidence || [];
+                            evidence.forEach((d, i) => {
+                                const pct = (d.confidence * 100).toFixed(1);
+                                html += `<div class="detection-item" style="animation-delay:${i * 0.07}s">
+                                    <div class="det-label">${d.label}</div>
+                                    <div class="det-bar-wrap"><div class="det-bar" style="width:${pct}%"></div></div>
+                                    <div class="det-pct">${pct}%</div>
+                                </div>`;
+                            });
+                            if (!evidence.length) html += '<p class="no-detections" style="margin-top:8px">No specific damage regions above threshold.</p>';
+
+                        // ROAD CONDITION ANALYSIS
+                        } else if (selectedModel === 'road_condition') {
+                            const isDamage = data.condition_status === "Road Damage Detected";
+                            html += `<div class="status-banner ${isDamage ? 'damage' : 'no-damage'}">${data.condition_status}</div>`;
+                            const evidence = data.evidence || [];
+                            evidence.forEach((d, i) => {
+                                const pct = (d.confidence * 100).toFixed(1);
+                                html += `<div class="detection-item" style="animation-delay:${i * 0.07}s">
+                                    <div class="det-label">${d.label}</div>
+                                    <div class="det-bar-wrap"><div class="det-bar" style="width:${pct}%"></div></div>
+                                    <div class="det-pct">${pct}%</div>
+                                </div>`;
+                            });
+                            if (!evidence.length) html += '<p class="no-detections" style="margin-top:8px">No road damage detected above threshold.</p>';
+                        }
+
+                        resultContent.innerHTML = html;
+                        resultsCard.classList.add('visible');
+
+                    } else {
+                        annotatedCol.style.display = 'none';
+                        resultContent.innerHTML = `<p class="error">${data.message || 'An error occurred.'}</p>`;
+                        resultsCard.classList.add('visible');
+                    }
+
+                    processBtn.disabled = false;
+                }, 350);
+
+            } catch (err) {
+                clearInterval(tick);
+                loadingWrap.classList.remove('visible');
+                annotatedCol.style.display = 'none';
+                resultContent.innerHTML = `<p class="error">${err.message}</p>`;
+                resultsCard.classList.add('visible');
+                processBtn.disabled = false;
+            }
+        });
+    </script>
+
+</body>
+</html>

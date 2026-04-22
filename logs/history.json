@@ -1,0 +1,51 @@
+[
+  {
+    "filename": "vecteezy_man-feeling-upset-in-casual-clothes-kneeled-and-touched-the_48018339.mp4",
+    "model": "Vehicle Damage Detection (YOLO11m)",
+    "detections": [
+      {
+        "label": "scratch",
+        "verdict": "Damage Detected",
+        "confidence": 95.3
+      },
+      {
+        "label": "crack",
+        "verdict": "Damage Detected",
+        "confidence": 72.0
+      }
+    ],
+    "timestamp": "2026-04-22 09:39:04"
+  },
+  {
+    "filename": "british_highway_traffic.mp4",
+    "model": "Road Object Detection",
+    "detections": [
+      {
+        "label": "truck",
+        "verdict": "Detected",
+        "confidence": 94.8
+      },
+      {
+        "label": "car",
+        "verdict": "Detected",
+        "confidence": 90.5
+      },
+      {
+        "label": "traffic light",
+        "verdict": "Detected",
+        "confidence": 75.3
+      },
+      {
+        "label": "bus",
+        "verdict": "Detected",
+        "confidence": 66.4
+      },
+      {
+        "label": "person",
+        "verdict": "Detected",
+        "confidence": 65.7
+      }
+    ],
+    "timestamp": "2026-04-22 09:36:45"
+  }
+]

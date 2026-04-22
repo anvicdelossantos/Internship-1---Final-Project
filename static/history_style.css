@@ -1,0 +1,403 @@
+/* ═══════════════════════════════════════════════
+   AI Media Processing — History Stylesheet
+   Matches style.css design tokens exactly
+   ═══════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --crimson:      #80011F;
+    --crimson-dim:  #80011F22;
+    --crimson-mid:  #80011F44;
+    --cream:        #F7E7CE;
+    --ink:          #0f0d0c;
+    --ink-mid:      #1e1a18;
+    --ink-soft:     #2d2825;
+    --muted:        #6b5f58;
+    --line:         #0f0d0c18;
+    --green:        #1a5c35;
+    --green-dim:    #1a5c3518;
+    --surface:      #faf8f5;
+    --white:        #ffffff;
+}
+
+/* ─────────────────────────────────────────────
+   BASE
+───────────────────────────────────────────── */
+html, body {
+    min-height: 100%;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    overflow-x: hidden;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* ─────────────────────────────────────────────
+   HEADER — identical to style.css
+───────────────────────────────────────────── */
+.app-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 40px;
+    background: var(--ink);
+    border-bottom: 1px solid #ffffff12;
+}
+
+.app-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--cream);
+}
+
+.header-badge {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--crimson);
+    background: var(--crimson-dim);
+    border: 1px solid var(--crimson-mid);
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* ─────────────────────────────────────────────
+   PAGE LAYOUT
+───────────────────────────────────────────── */
+.page-wrapper {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 44px 60px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+}
+
+/* ─────────────────────────────────────────────
+   PAGE TOP ROW
+───────────────────────────────────────────── */
+.page-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.page-top-left {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.page-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.page-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--ink);
+    line-height: 1.2;
+}
+
+.page-title span {
+    color: var(--crimson);
+}
+
+.record-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    background: var(--crimson-dim);
+    color: var(--crimson);
+    border: 1px solid var(--crimson-mid);
+    padding: 5px 14px;
+    border-radius: 20px;
+    white-space: nowrap;
+}
+
+/* ─────────────────────────────────────────────
+   BACK BUTTON — matches style.css btn-secondary
+───────────────────────────────────────────── */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.15s, border-color 0.15s;
+    align-self: flex-start;
+}
+
+.btn-back:hover {
+    color: var(--ink);
+    border-color: #0f0d0c40;
+}
+
+/* ─────────────────────────────────────────────
+   HISTORY CARDS
+───────────────────────────────────────────── */
+.history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.history-card {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    overflow: hidden;
+    animation: fadeUp 0.35s ease both;
+}
+
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Card header — mirrors results-header from style.css */
+.history-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 16px 24px;
+    background: var(--ink);
+    border-bottom: 1px solid #ffffff10;
+}
+
+.history-filename {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.file-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: var(--crimson-dim);
+    border: 1px solid var(--crimson-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.file-icon svg rect,
+.file-icon svg path {
+    stroke: var(--crimson);
+}
+
+.filename-text {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+}
+
+.history-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.model-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    background: var(--crimson);
+    color: var(--cream);
+}
+
+.timestamp {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+}
+
+/* Card body — detection table */
+.history-card-body {
+    padding: 8px 0 4px;
+}
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.history-table thead tr {
+    border-bottom: 1px solid var(--line);
+}
+
+.history-table th {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 10px 24px;
+    text-align: left;
+}
+
+.history-table th:last-child {
+    text-align: right;
+}
+
+.history-table td {
+    padding: 11px 24px;
+    font-size: 13.5px;
+    color: var(--ink);
+    border-bottom: 1px solid var(--line);
+}
+
+.history-table tr:last-child td {
+    border-bottom: none;
+}
+
+.history-table tbody tr:hover td {
+    background: #80011f04;
+}
+
+/* Label cell */
+.td-label {
+    font-weight: 500;
+    text-transform: capitalize;
+}
+
+/* Verdict cell */
+.td-verdict {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+/* Confidence cell */
+.conf-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.conf-bar-wrap {
+    width: 72px;
+    height: 4px;
+    background: var(--crimson-dim);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.conf-bar {
+    height: 100%;
+    background: var(--crimson);
+    border-radius: 4px;
+    width: 0;                              /* set by JS */
+    transition: width 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.conf-pct {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 42px;
+    text-align: right;
+}
+
+/* ─────────────────────────────────────────────
+   EMPTY STATE
+───────────────────────────────────────────── */
+.empty-state {
+    background: var(--white);
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    padding: 64px 32px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.empty-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    background: var(--crimson-dim);
+    border: 1px solid var(--crimson-mid);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.empty-icon svg circle,
+.empty-icon svg path {
+    stroke: var(--crimson);
+}
+
+.empty-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+}
+
+.empty-desc {
+    font-size: 14px;
+    color: var(--muted);
+    max-width: 320px;
+    line-height: 1.6;
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .app-header { padding: 16px 20px; }
+
+    .page-wrapper { padding: 28px 20px 48px; gap: 20px; }
+
+    .page-top { flex-direction: column; align-items: flex-start; }
+
+    .history-table th,
+    .history-table td { padding: 10px 16px; }
+
+    .history-card-header { padding: 14px 16px; }
+
+    .conf-bar-wrap { width: 48px; }
+}
